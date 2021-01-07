@@ -5,6 +5,62 @@ class Nav extends React.Component {
   state = {
     searchText: ""
 };
+async fetchProducts(pageNumber){
+  pageNumber = (pageNumber==undefined) ? 1 : pageNumber;
+  const res = await axios.get('/product?page='+pageNumber);
+  if (res.data.status === 200){
+      console.log(res);
+      this.setState({'products' : res.data.products.data});
+      this.setState({'pagination' : res.data.products});
+      this.setState({'loading' : false});
+      this.renderPagination();
+  }
+
+} 
+
+renderPagination(){
+  const {current_page, per_page, total} = this.state.pagination;
+  return(
+      <div>
+      <Pagination
+    activePage={current_page}
+    itemsCountPerPage={per_page}
+    totalItemsCount={total}
+    pageRangeDisplayed={5}
+    onChange={(pageNumber)=> this.fetchProducts(pageNumber)}
+    itemClass="btn-group mr-2"
+    linkClass="btn btn-secondary"
+    firstPageText="First"
+    lastPageText="Last"
+  />
+      </div>
+  );
+}
+renderProducts(){
+  const {product} = this.state.products;
+console.log(product);
+  return(
+      <React.Fragment>
+          <div>
+{product.map((products, index) =>
+
+<div className="card mb-3 col-md-3" key={index}>
+<div className="card-body">
+                      <span className="image">
+                          {products.product_name[0]}
+                      </span>
+<div className="row foot">
+<span className="card-title product-heading col-md-8">{products.product_name}</span>
+<span className="card-subtitle text-muted product-price col-md-4">${products.product_price}.00</span>
+  </div>                                
+</div>
+</div>  
+)}
+          </div>
+
+      </React.Fragment>
+  );
+}
 
 handleRoute = route => () => {
     this.props.history.push({ pathname: route });
@@ -15,6 +71,7 @@ handleSearchInput = event => {
         searchText: event.target.value
     });
     console.log(this.state);
+
 };
 
 handleSearchSubmit = () => {
@@ -65,7 +122,7 @@ handleFormSubmit = e => e.preventDefault();
         </div>
       </li>
       <li className="nav-item active">
-      <form className="form-inline my-2 my-lg-0" inline onSubmit={this.handleFormSubmit}>
+      <form className="form-inline my-2 my-lg-0" onSubmit={this.handleFormSubmit}>
                         <input
                             type="text"
                             onChange={this.handleSearchInput}

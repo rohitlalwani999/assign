@@ -12,11 +12,16 @@ class productController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $searchText = (isset($request->searchText) AND ($request->searchText!='')) ? $request->searchText : '';
         // $products = product::all();
-        $products = product::query()->orderByDesc('id')->paginate(3);
-        return response()->json(['status' => 200 , 'products' => $products]);
+        if ($searchText!=""){
+            $products = product::query()->where('product_name', 'LIKE', "%{$searchText}%")->orderByDesc('id')->paginate(3);
+        } else {
+            $products = product::query()->orderByDesc('id')->paginate(3);
+        }
+        return response()->json(['status' => 200 , 'searchText'=>$searchText, 'products' => $products]);
 
     }
 
