@@ -4,15 +4,16 @@ import Pagination from "react-js-pagination";
 import Product from "./Product";
 import { data } from "jquery";
 
-class Products extends React.Component {
+class SearchProducts extends React.Component {
     state = {
         products : [],
         pagination : [],
         loading : true
     }
-    async fetchProducts(pageNumber){
+    async fetchProducts(pageNumber, keyword){
         pageNumber = (pageNumber==undefined) ? 1 : pageNumber;
-        const res = await axios.get('/product?page='+pageNumber);
+        keyword = (keyword==undefined) ? 'Pro' : '';
+        const res = await axios.get('/productsearch?page='+pageNumber+'&&keyword='+keyword);
         if (res.data.status === 200){
             console.log(res);
             this.setState({'products' : res.data.products.data});
@@ -101,4 +102,4 @@ console.log(product);
     }
 }
 
-export default Products;
+export default SearchProducts;

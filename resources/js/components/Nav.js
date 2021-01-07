@@ -1,9 +1,51 @@
 import React from "react";
 import {Link} from "react-router-dom";
 
+class Nav extends React.Component {
+  state = {
+    searchText: ""
+};
 
-const Nav = () => {
-    return(<div>
+handleRoute = route => () => {
+    this.props.history.push({ pathname: route });
+};
+
+handleSearchInput = event => {
+    this.setState({
+        searchText: event.target.value
+    });
+    console.log(this.state);
+};
+
+handleSearchSubmit = () => {
+    if (this.state.searchText) {
+        let text = this.state.searchText;
+        this.setState({ searchText: "" })
+        this.props.history.push({
+            pathname: "/results",
+            state: { searchText: text }
+        });
+        console.log(this.state);
+      } else {
+        alert("Please enter some search text!");
+    }
+};
+
+handleSearchKeyUp = event => {
+    event.preventDefault();
+    if (event.key === 'Enter' && event.keyCode === 13) {
+        this.handleSearchSubmit();
+    }
+}
+
+handleFormSubmit = e => e.preventDefault();
+
+  render(){
+  
+    const { query } = this.state;
+    console.warn(this.state);
+    return(
+      <div>
       <div className="contanier">
 <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
 <Link className="navbar-brand" to="/">One<span className="secnav">drop</span></Link>
@@ -23,10 +65,33 @@ const Nav = () => {
         </div>
       </li>
       <li className="nav-item active">
-      <form className="form-inline my-2 my-lg-0">
-      <input type="text" name="keyword" className="form-control" placeholder="Search here..." required/>
+      <form className="form-inline my-2 my-lg-0" inline onSubmit={this.handleFormSubmit}>
+                        <input
+                            type="text"
+                            onChange={this.handleSearchInput}
+                            value={this.state.searchText}
+                            onKeyUp={this.handleSearchKeyUp}
+                            type="text"
+                            id="search-input"
+                            placeholder="Search"
+                            className="form-control"
+                        />
+                        <button onClick={this.handleSearchSubmit} className="btn btn-primary my-2 my-sm-0" type="submit">
+                            Search
+                        </button>
+                    </form>
+      {/* <form >
+      <input
+					type="text"
+					name="query"
+					value={ query }
+					id="search-input"
+          placeholder="Search..."
+          className="form-control"
+					onChange={this.handleOnInputChange}
+				/>
         <button className="btn btn-primary my-2 my-sm-0" type="submit">Search</button>
-      </form>
+      </form> */}
       </li>
 
     </ul>
@@ -63,6 +128,9 @@ const Nav = () => {
 </div>
 </div>
     )
+  }
+
 }
+
 
 export default Nav;

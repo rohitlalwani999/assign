@@ -27,6 +27,7 @@
     "dependencies": {
         "@babel/plugin-proposal-class-properties": "^7.12.1",
         "bootswatch": "^4.5.3",
+        "react-js-pagination": "^3.0.3",
         "react-router": "^5.2.0",
         "react-router-dom": "^5.2.0"
     }
