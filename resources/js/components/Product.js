@@ -1,7 +1,10 @@
 import React from "react";
 
 class Product extends React.Component {
-    render(){
+  constructor(props){
+    super(props);
+  }
+  render(){
         const {product} = this.props;
         return (
 <div className="card mb-3 col-md-3">
@@ -17,9 +20,12 @@ class Product extends React.Component {
   {/* <div className="card-body">
     <a href="#" className="card-link">Card link</a>
     <a href="#" className="card-link">Another link</a>
-  </div> */}
-  {/* <div className="card-footer text-muted">
-  </div> */}
+  </div> */} 
+  <div className="card-footer text-muted">
+    <button className="btn btn-sm btn-danger"
+    onClick={()=>{this.props.parentMethod(product.id)}}
+    >Show Details</button>
+  </div>
 </div>  
 
         );

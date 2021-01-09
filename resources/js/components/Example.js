@@ -9,29 +9,42 @@ import Product from "./Product";
 import "./app.css";
 import {Link} from "react-router-dom";
 import Pagination from "react-js-pagination";
-
+import ShowProductModal from "./ShowProductModal";
 class Example extends React.Component {
+
 
 state = {
     searchText: "",
     products : [],
     pagination : [],
-    loading : true
+    loading : true,
+    showModal : false,
+    product : []
+
 }
 async fetchProducts(searchText, pageNumber){
   searchText = (searchText==undefined) ? '' : searchText;
   pageNumber = (pageNumber==undefined) ? 1 : pageNumber;
   const res = await axios.get('/product?page='+pageNumber+'&&searchText='+searchText);
   if (res.data.status === 200){
-          console.log(res);
       this.setState({'products' : res.data.products.data});
       this.setState({'pagination' : res.data.products});
       this.setState({'loading' : false});
       this.renderPagination();
   
   }
-
 } 
+
+
+fetchProduct = async (productId) => {
+    productId = (productId==undefined) ? 1 : productId;
+    const res = await axios.get('/showproduct?pro='+productId);
+    if (res.data.status === 200){
+        this.setState({'product' : res.data.product});
+        this.setState({showModal:true});
+    }
+    };
+  
 
 renderPagination(){
   const {current_page, per_page, total} = this.state.pagination;
@@ -53,7 +66,6 @@ renderPagination(){
 }
 renderProducts(){
   const {product} = this.state.products;
-console.log(product);
   return(
       <React.Fragment>
           <div>
@@ -87,7 +99,6 @@ console.log(product);
       searchText: event.target.value
     });
     this.fetchProducts(this.state.searchText, 1);
-    console.log(this.state);
   };
   
   handleSearchSubmit = () => {
@@ -98,7 +109,6 @@ console.log(product);
               pathname: "/",
               state: { searchText: text }
           });
-          console.log(this.state);
         } else {
           alert("Please enter some search text!");
       }
@@ -117,6 +127,9 @@ console.log(product);
   }  
   render(){
     const { pagination } = this.state;
+    let ModalClose = () => {
+        this.setState({showModal:false});
+    }
     return(
       <div>
       <Router>
@@ -276,9 +289,15 @@ console.log(product);
 
 <div className="pagination_bar">
 <div className="btn-group" role="group" aria-label="Basic example">
-  <button type="button" className="btn btn-secondary">Popular</button>
+  <button type="button" onClick={()=>this.setState({showModal:true})} className="btn btn-secondary">Popular</button>
   <button type="button" className="btn btn-secondary">New</button>
   <button type="button" className="btn btn-secondary">Promotions</button>
+  <ShowProductModal
+show={this.state.showModal}
+onHide={ModalClose}
+product= {this.state.product}
+
+/>
 </div>
     <div className="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
     {pagination && this.renderPagination()}
@@ -288,7 +307,7 @@ console.log(product);
 
                 {/* {products && this.renderProducts()} */}
                 {/* {this.state.products.map(product => (<Product product = {product} key ={product.id} />))} */}
-                {this.state.products.map(product => (<Product product = {product} key ={product.id} />))}
+                {this.state.products.map(product => (<Product product = {product} key ={product.id} parentMethod={this.fetchProduct}/>))}
           </div>
 </div>
           </Route>

@@ -35,10 +35,11 @@ class productController extends Controller
         //
     }
 
-    public function search(Request $request){
-        $keyword = $request->keyword;
-        $products = product::where('product_name', 'like', "%{$data}%")->get();
-        return response()->json(['status' => 200 , 'products' => $products]);
+    public function showproduct(Request $request){
+        $proId = $request->pro;
+        $product = Product::whereIn('id', [$proId])->get();
+        // $products = product::where('product_name', 'like', "%{$data}%")->get();
+        return response()->json(['status' => 200 , 'product' => $product]);
     }
     /**
      * Store a newly created resource in storage.
